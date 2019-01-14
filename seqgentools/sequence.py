@@ -4,7 +4,8 @@ from __future__ import unicode_literals, print_function, division
 
 import sys
 import abc
-from math import ceil, factorial
+import copy
+from math import ceil, factorial, floor
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -21,6 +22,12 @@ NAN = float("nan")
 class InfinityError(Exception):
     pass
 
+def _nPr(n, r):
+    return factorial(n) // factorial(n-r)
+
+def _nCr(n, r):
+    return factorial(n) // (factorial(r) * factorial(n-r))
+
 class Sequence(Object):
 
     @abc.abstractmethod
@@ -31,27 +38,31 @@ class Sequence(Object):
     def getitem(self, key):
         pass
 
-    def _item(self, k):
-        k = self._validate_key(k)
+    @abc.abstractmethod
+    def copy(self, memo={}):
+        pass
 
-        if k < self._len:
-            return self.getitem(k)
-        else:
-            clsname = self.__class__.__name__
-            raise IndexError("%s index out of range"%clsname)
+    def __copy__(self):
+        return self.copy()
+
+    def __deepcopy__(self, memo):
+        return self.copy(memo=memo)
+
+    def __add__(self, other):
+        return Chain(self, other)
 
     def __getitem__(self, key):
 
         if isinstance(key, slice):
-            start = key.start if key.start else 0
-            stop = key.stop if key.stop else self._len
-            step = key.step if key.step else 1
-            result = []
-            for idx in range(start, stop, step):
-                result.append(self._item(idx))
-            return tuple(result)
+            return Slice(self, key)
         else:
-            return self._item(key)
+            key = self._validate_key(key)
+
+            if key < self._len:
+                return self.getitem(key)
+            else:
+                clsname = self.__class__.__name__
+                raise IndexError("%s index out of range"%clsname)
 
     def index(self, val):
         raise NotImplementedError()
@@ -120,6 +131,34 @@ class Wrapper(Sequence):
 
         return self._sequence[key]
         
+    def copy(self, memo={}):
+        return Wrapper(copy.deepcopy(self._sequence, memo))
+
+class Slice(Sequence):
+
+    def __init__(self, sequence, slc):
+
+        self._sequence = sequence
+
+        self._start = slc.start if slc.start else 0
+        self._stop = slc.stop if slc.stop else len(self._sequence)
+        self._step = slc.step if slc.step else 1
+
+        _len = float(self._stop - self._start) / float(self._step)
+        self._len = int(ceil(_len)) if _len > 0 else 0
+
+    def getitem(self, key):
+
+        val = self._start + self._step * key
+        if ((self._step > 0 and val < self._stop) or
+                (self._step < 0 and val > self._stop)):
+            return self._sequence[val]
+        
+    def copy(self, memo={}):
+        slc = slice(self._start, self._stop, self._step)
+        return Slice(copy.deepcopy(self._sequennce, memo), slc)
+
+
 class Range(Sequence):
 
     def __init__(self, *vargs):
@@ -150,6 +189,10 @@ class Range(Sequence):
                 (self._step < 0 and val > self._stop)):
             return val
 
+    def copy(self, memo={}):
+        return Range(self._start, self._stop, self._step)
+
+
 class Count(Sequence):
 
     def __init__(self, start=0, step=1):
@@ -164,6 +207,9 @@ class Count(Sequence):
     def getitem(self, key):
 
         return self._start + self._step * key
+
+    def copy(self, memo={}):
+        return Count(self._start, self._step)
 
 
 class Cycle(Sequence):
@@ -191,6 +237,9 @@ class Cycle(Sequence):
 
         return self._sequence[key]
 
+    def copy(self, memo={}):
+        return Cycle(copy.deepcopy(self._sequence, memo))
+
 
 class Repeat(Sequence):
 
@@ -212,6 +261,10 @@ class Repeat(Sequence):
     def getitem(self, key):
 
         return self._elem
+
+    def copy(self, memo={}):
+        return Repeat(self._elem, times=self._times)
+
 
 class Chain(Sequence):
 
@@ -239,6 +292,12 @@ class Chain(Sequence):
                 return seq[key - accum_len]
             accum_len += _len
 
+    def copy(self, memo={}):
+
+        seqs = [copy.deepcopy(s, memo) for s in self._sequences]
+        return Chain(*seqs)
+
+
 class Product(Sequence):
 
     def __init__(self, *sequences):
@@ -265,6 +324,11 @@ class Product(Sequence):
 
         return tuple(product)
 
+    def copy(self, memo={}):
+
+        seqs = [copy.deepcopy(s, memo) for s in self._sequences]
+        return Product(*seqs)
+
 class Permutations(Sequence):
 
     def __init__(self, sequence, r=None):
@@ -280,41 +344,88 @@ class Permutations(Sequence):
         if self._r > self._n:
             self._len = 0
         else:
-            self._len = factorial(self._n) // factorial(self._n-self._r)
+            self._len = _nPr(self._n, self._r)
+
+    def copy(self, memo={}):
+
+        return Permutations(copy.deepcopy(self._sequence, memo), r=self._r)
 
     def getitem(self, key):
 
-        class Marker(object):
-            def __init__(self, seq):
-                self.seq = seq 
-                self.size = len(seq)
-                self.used = []
-            def pop(self, reverse=True):
-                if reverse:
-                    l = range(self.size-1, -1, -1)
-                else:
-                    l = range(self.size)
-                for i in l:
-                    if i in self.used:
-                        continue
-                    self.used.append(i)
-                    return self.seq[i]
-            def remained(self):
-                return len(self.used) < self.size
+        P = []
+        import pdb; pdb.set_trace()
+        S = copy.deepcopy(self._sequence)
+        while len(S) > 1:
+            f = factorial(len(S)-1)
+            i = int(floor(key/f))
+            x = S[i]
+            key = key%f
+            P.append(x)
+            S = S[:i] + S[i+1:]
+        return tuple(P)
 
-        if self._r > 0:
-            reverse = True
-            seqc = Marker(self._sequence)
-            seqn = [seqc.pop(reverse=reverse)]
-            divider= 2
-            while seqc.remained():
-                key, new_key= key//divider, key%divider
-                seqn.insert(new_key, seqc.pop(reverse=reverse))
-                divider+= 1
+#def kthperm(S, k):  #  nonrecursive version
+#    P = []
+#    while S != []:
+#        f = factorial(len(S)-1)
+#        i = int(floor(k/f))
+#        x = S[i]
+#        k = k%f
+#        P.append(x)
+#        S = S[:i] + S[i+1:]
+#    return P
 
-            return tuple(seqn)
-        else:
-            return tuple()
+#class Permutations(Sequence):
+#
+#    def __init__(self, sequence, r=None):
+#
+#        self._sequence = self._validate_sequence(sequence)
+#
+#        self._n = len(self._sequence)
+#
+#        if self._n == INF:
+#            raise InfinityError("Permutation do not support infinity sequence.")
+#
+#        self._r = self._n if r is None else r
+#        if self._r > self._n:
+#            self._len = 0
+#        else:
+#            self._len = _nPr(self._n, self._r)
+#
+#    def getitem(self, key):
+#
+#        class Marker(object):
+#            def __init__(self, seq, r):
+#                self.seq = seq 
+#                self.r = r 
+#                self.size = len(seq)
+#                self.used = []
+#            def pop(self, reverse=True):
+#                if reverse:
+#                    l = range(self.size-1, -1, -1)
+#                else:
+#                    l = range(self.size)
+#                for i in l:
+#                    if i in self.used:
+#                        continue
+#                    self.used.append(i)
+#                    return self.seq[i]
+#            def remained(self):
+#                return len(self.used) < self.r
+#
+#        if self._r > 0:
+#            reverse = False
+#            seqc = Marker(self._sequence, self._r)
+#            seqn = [seqc.pop(reverse=reverse)]
+#            divider= 2
+#            while seqc.remained():
+#                key, new_key= key//divider, key%divider
+#                seqn.insert(new_key, seqc.pop(reverse=reverse))
+#                divider+= 1
+#
+#            return tuple(seqn)
+#        else:
+#            return tuple()
 
 class Combinations(Sequence):
 
@@ -332,10 +443,7 @@ class Combinations(Sequence):
         if r > self._n:
             self._len = 0
         else:
-            self._len = self._nCr(self._n, self._r)
-
-    def _nCr(self, n, r):
-        return (factorial(n) // factorial(r) // factorial(n-r))
+            self._len = _nCr(self._n, self._r)
 
     def _kth(self, k, l, r):
 
@@ -344,7 +452,7 @@ class Combinations(Sequence):
         elif len(l) == r:
             return l
         else:
-            i=self._nCr(len(l)-1, r-1)
+            i = _nCr(len(l)-1, r-1)
             if k < i:
                 return list(l[0:1]) + self._kth(k, l[1:], r-1)
             else:
@@ -353,3 +461,39 @@ class Combinations(Sequence):
     def getitem(self, key):
 
         return tuple(self._kth(key, self._sequence, self._r))
+
+    def copy(self, memo={}):
+
+        return Combinations(copy.deepcopy(self._sequence, memo), self._r)
+
+class PermutationRange(Sequence):
+
+    def __init__(self, sequence):
+
+        self._sequence = self._validate_sequence(sequence)
+
+        self._n = len(self._sequence)
+
+        if self._n == INF:
+            raise InfinityError("PermutationRange do not support infinity sequence.")
+
+        self._sub_perms = []
+        self._len = 0
+        for r in range(self._n+1):
+            perm = Permutations(self._sequence, r=r)
+            self._sub_perms.append(perm)
+            self._len += len(perm)
+
+    def getitem(self, key):
+
+        accum_len = 0
+        for perm in self._sub_perms:
+            _len = len(perm)
+            if key >= accum_len and key < accum_len + _len:
+                return perm[key - accum_len]
+            accum_len += _len
+
+    def copy(self, memo={}):
+
+        return PermutationRange(copy.deepcopy(self._sequence, memo))
+

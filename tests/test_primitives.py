@@ -191,6 +191,13 @@ class PrimitiveTests(unittest.TestCase):
         self.assertEqual(len(search_generator), 4)
 
 
+    def test_permutationrange(self):
+
+        l = [1,2,3]
+        pr = sgt.PermutationRange(l)
+        elems = [r for r in sgt.PermutationRange(l)]
+        print(elems)
+
 
 test_classes = (PrimitiveTests,)
 
