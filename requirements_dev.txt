@@ -1,0 +1,12 @@
+coverage
+flake8
+pip
+pipenv
+setuptools
+Sphinx
+sphinx-rtd-theme
+toml
+tox
+twine
+wheel
+virtualenv
