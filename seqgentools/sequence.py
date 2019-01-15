@@ -5,7 +5,7 @@ from __future__ import unicode_literals, print_function, division
 import sys
 import abc
 import copy
-from math import ceil, factorial, floor
+from math import ceil, factorial
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -27,6 +27,9 @@ def _nPr(n, r):
 
 def _nCr(n, r):
     return factorial(n) // (factorial(r) * factorial(n-r))
+
+def _nCRr(n, r):
+    return factorial(n+r-1) // (factorial(r) * factorial(n-1))
 
 class Sequence(Object):
 
@@ -431,6 +434,40 @@ class Combinations(Sequence):
     def copy(self, memo={}):
 
         return Combinations(copy.deepcopy(self._sequence, memo), self._r)
+
+class CombinationsR(Sequence):
+
+    def __init__(self, sequence, r):
+
+        self._sequence = self._validate_sequence(sequence)
+
+        self._n = len(self._sequence)
+
+        if self._n == INF:
+            raise InfinityError("Combination do not support infinite sequence.")
+
+        self._r = r
+
+        self._len = _nCRr(self._n, self._r)
+
+    def _kth(self, k, l, r):
+
+        if r == 0:
+            return []
+        else:
+            i = _nCRr(len(l), r-1)
+            if k < i:
+                return Chain(l[0:1], self._kth(k, l, r-1))
+            else:
+                return self._kth(k-i, l[1:], r)
+
+    def getitem(self, key):
+
+        return tuple(self._kth(key, self._sequence, self._r))
+
+    def copy(self, memo={}):
+
+        return CombinationsR(copy.deepcopy(self._sequence, memo), self._r)
 
 class PermutationRange(Sequence):
 

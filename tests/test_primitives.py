@@ -39,6 +39,18 @@ class PrimitiveTests(unittest.TestCase):
         slc = (0, -10, -1) 
         self._iter_equals(sgt.Range(*slc), iter(range(*slc)))
 
+        slc = (10, -10, -1) 
+        self._iter_equals(sgt.Range(*slc), iter(range(*slc)))
+
+        slc = (10, -10, -10) 
+        self._iter_equals(sgt.Range(*slc), iter(range(*slc)))
+
+        slc = (10, -10, -20) 
+        self._iter_equals(sgt.Range(*slc), iter(range(*slc)))
+
+        slc = (10, -10, -30) 
+        self._iter_equals(sgt.Range(*slc), iter(range(*slc)))
+
     def test_count(self):
 
         slc = (0, 1) 
@@ -111,6 +123,12 @@ class PrimitiveTests(unittest.TestCase):
             self._iter_equals(sgt.Combinations(l,r), it.combinations(l,r))
         self._iter_equals(sgt.Combinations(l,len(l)*2), it.combinations(l,len(l)*2))
 
+    def test_combinations_with_replacement(self):
+
+        l = range(5)
+        for r in range(len(l)+1):
+            self._iter_equals(sgt.CombinationsR(l,r), it.combinations_with_replacement(l,r))
+        self._iter_equals(sgt.CombinationsR(l,len(l)*2), it.combinations_with_replacement(l,len(l)*2))
 
     def test_permutationrange(self):
 
