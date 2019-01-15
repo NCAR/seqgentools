@@ -140,9 +140,9 @@ class Slice(Sequence):
 
         self._sequence = sequence
 
-        self._start = slc.start if slc.start else 0
-        self._stop = slc.stop if slc.stop else len(self._sequence)
-        self._step = slc.step if slc.step else 1
+        self._start = 0 if slc.start is None else slc.start
+        self._stop = len(self._sequence) if slc.stop is None else slc.stop
+        self._step = 1 if slc.step is None else slc.step
 
         _len = float(self._stop - self._start) / float(self._step)
         self._len = int(ceil(_len)) if _len > 0 else 0
@@ -353,15 +353,18 @@ class Permutations(Sequence):
     def getitem(self, key):
 
         P = []
-        import pdb; pdb.set_trace()
-        S = copy.deepcopy(self._sequence)
-        while len(S) > 1:
-            f = factorial(len(S)-1)
-            i = int(floor(key/f))
-            x = S[i]
-            key = key%f
-            P.append(x)
-            S = S[:i] + S[i+1:]
+        if self._r == 1:
+            return (self._sequence[key],)
+        elif self._r > 1:
+
+            S = copy.deepcopy(self._sequence)
+            while len(S) > self._n - self._r:
+                f = factorial(len(S)-1)
+                i = int(floor(key/f))
+                x = S[i]
+                key = key%f
+                P.append(x)
+                S = S[:i] + S[i+1:]
         return tuple(P)
 
 #def kthperm(S, k):  #  nonrecursive version

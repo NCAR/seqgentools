@@ -5,7 +5,7 @@ from random import seed, randint
 import seqgentools as sgt
 import itertools as it
 
-N = 6
+N = 3
 
 class PrimitiveTests(unittest.TestCase):
 
@@ -127,6 +127,12 @@ class PrimitiveTests(unittest.TestCase):
         for seq in seq1:
             self.assertIn(seq, seq2)
 
+        seq1 = [p for p in sgt.Permutations(l, 1)]
+        seq2 = [p for p in it.permutations(l, 1)]
+
+        for seq in seq1:
+            self.assertIn(seq, seq2)
+
         seq1 = [p for p in sgt.Permutations(l, N)]
         seq2 = [p for p in it.permutations(l, N)]
 
@@ -169,6 +175,9 @@ class PrimitiveTests(unittest.TestCase):
         r = 0
         self._iter_equals(iter(sgt.Combinations(l,r)), it.combinations(l,r))
 
+        r = 1
+        self._iter_equals(iter(sgt.Combinations(l,r)), it.combinations(l,r))
+
         r = len(l)
         self._iter_equals(iter(sgt.Combinations(l,r)), it.combinations(l,r))
 
@@ -196,8 +205,8 @@ class PrimitiveTests(unittest.TestCase):
         l = [1,2,3]
         pr = sgt.PermutationRange(l)
         elems = [r for r in sgt.PermutationRange(l)]
-        print(elems)
 
+        import pdb; pdb.set_trace()
 
 test_classes = (PrimitiveTests,)
 
