@@ -109,6 +109,9 @@ class Sequence(Object):
     def pop(self, idx=None):
 
         if idx is None:
+            if self._len == INF:
+                raise ValueError(
+                    "Infinite sequence does not support pop method.")
             item = self._sequence[-1]
             self._sequence = self._sequence[:-1]
         elif isinstance(idx, int):
