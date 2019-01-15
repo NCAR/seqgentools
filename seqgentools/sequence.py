@@ -30,6 +30,13 @@ def _nCr(n, r):
 
 class Sequence(Object):
 
+    def __new__(cls, *vargs, **kwargs):
+
+        obj = super(Sequence, cls).__new__(cls, *vargs, **kwargs)
+        obj._iter_key = 0
+
+        return obj
+
     @abc.abstractmethod
     def __init__(self, *vargs, **kwargs):
         pass
@@ -72,14 +79,14 @@ class Sequence(Object):
 
     def __iter__(self):
 
-        self._key = 0
+        self._iter_key = 0
         return self
 
     def __next__(self):
 
-        if self._len == INF or self._key < self._len:
-            val = self.getitem(self._key)
-            self._key += 1
+        if self._len == INF or self._iter_key < self._len:
+            val = self.getitem(self._iter_key)
+            self._iter_key += 1
             return val
         else:
             raise StopIteration
@@ -367,33 +374,6 @@ class Permutations(Sequence):
         else:
             self._len = _nPr(self._n, self._r)
 
-#    def _kth(self, k, S, r):   # recursive version
-#        P = []
-#        if len(S) == 0:
-#            return []
-#        elif r > 0:
-#            if len(S) == 1:
-#                return [S[k]]
-#            else:
-#                f = factorial(len(S)-1)
-#                i = int(floor(k/f))
-#                return [S[i]] + self._kth(k%f, S[:i] + S[i+1:], r-1)
-#        else:
-#            return []
-#
-#            i = _nPr(len(l)-1, r-1)
-#def getPerm(seq, index):
-#    "Returns the <index>th permutation of <seq>"
-#    seqc= list(seq[:])
-#    seqn= [seqc.pop()]
-#    divider= 2 # divider is meant to be len(seqn)+1, just a bit faster
-#    while seqc:
-#        index, new_index= index//divider, index%divider
-#        seqn.insert(new_index, seqc.pop())
-#        divider+= 1
-#    return seqn
-
-
     def _kth(self, k, l, r):
 
         if r == 0:
@@ -403,26 +383,6 @@ class Permutations(Sequence):
             for idx in range(len(l)):
                 if k < (idx+1)*inc:
                     return Chain([l[idx]], self._kth(k-inc*idx, l[:idx]+l[idx+1:], r-1))
-                #else:
-                #    return self._kth(k-i, l[1:], r)
-
-#    def getitem(self, key):
-#
-#        if self._r == 0:
-#            return tuple()
-#        elif self._r == 1:
-#            return tuple([self._sequence[key]])
-#        else:
-#            seqc = copy.deepcopy(self._sequence)
-#            #seqn = [seqc.pop(0)]
-#            seqn = []
-#            divider= 2
-#            while self._r > len(seqn):
-#                key, new_key= key//divider, key%divider
-#                seqn.insert(new_key, seqc.pop())
-#                divider+= 1
-#
-#            return tuple(seqn)
 
     def getitem(self, key):
 
@@ -431,86 +391,6 @@ class Permutations(Sequence):
     def copy(self, memo={}):
 
         return Permutations(copy.deepcopy(self._sequence, memo), r=self._r)
-
-#    def getitem(self, key):
-#
-#        P = []
-#        if self._r == 1:
-#            return (self._sequence[key],)
-#        elif self._r > 1:
-#
-#            S = copy.deepcopy(self._sequence)
-#            while len(S) > self._n - self._r:
-#                f = factorial(len(S)-1)
-#                i = int(floor(key/f))
-#                x = S[i]
-#                key = key%f
-#                P.append(x)
-#                S = S[:i] + S[i+1:]
-#        return tuple(P)
-
-#def kthperm(S, k):  #  nonrecursive version
-#    P = []
-#    while S != []:
-#        f = factorial(len(S)-1)
-#        i = int(floor(k/f))
-#        x = S[i]
-#        k = k%f
-#        P.append(x)
-#        S = S[:i] + S[i+1:]
-#    return P
-
-#class Permutations(Sequence):
-#
-#    def __init__(self, sequence, r=None):
-#
-#        self._sequence = self._validate_sequence(sequence)
-#
-#        self._n = len(self._sequence)
-#
-#        if self._n == INF:
-#            raise InfinityError("Permutation do not support infinite sequence.")
-#
-#        self._r = self._n if r is None else r
-#        if self._r > self._n:
-#            self._len = 0
-#        else:
-#            self._len = _nPr(self._n, self._r)
-#
-#    def getitem(self, key):
-#
-#        class Marker(object):
-#            def __init__(self, seq, r):
-#                self.seq = seq 
-#                self.r = r 
-#                self.size = len(seq)
-#                self.used = []
-#            def pop(self, reverse=True):
-#                if reverse:
-#                    l = range(self.size-1, -1, -1)
-#                else:
-#                    l = range(self.size)
-#                for i in l:
-#                    if i in self.used:
-#                        continue
-#                    self.used.append(i)
-#                    return self.seq[i]
-#            def remained(self):
-#                return len(self.used) < self.r
-#
-#        if self._r > 0:
-#            reverse = False
-#            seqc = Marker(self._sequence, self._r)
-#            seqn = [seqc.pop(reverse=reverse)]
-#            divider= 2
-#            while seqc.remained():
-#                key, new_key= key//divider, key%divider
-#                seqn.insert(new_key, seqc.pop(reverse=reverse))
-#                divider+= 1
-#
-#            return tuple(seqn)
-#        else:
-#            return tuple()
 
 
 class Combinations(Sequence):
