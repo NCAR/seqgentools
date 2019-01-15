@@ -96,6 +96,21 @@ class Sequence(Object):
         else:
             return None
 
+    def pop(self, idx=None):
+
+        if idx is None:
+            item = self._sequence[-1]
+            self._sequence = self._sequence[:-1]
+        elif isinstance(idx, int):
+            item = self._sequence[idx]
+            self._sequence = self._sequence[:idx] + self._sequence[idx+1:]
+        else:
+            raise TypeError("pop method requires integer index.")
+
+        self._len -= 1
+
+        return item
+        
     def _validate_key(self, key):
 
         if not isinstance(key, (int, long)):
@@ -232,10 +247,11 @@ class Cycle(Sequence):
 
     def getitem(self, key):
 
-        if key >= self._sequence_len:
-            key = key % self._sequence_len
+        if self._sequence_len > 0:
+            if key >= self._sequence_len:
+                key = key % self._sequence_len
 
-        return self._sequence[key]
+            return self._sequence[key]
 
     def copy(self, memo={}):
         return Cycle(copy.deepcopy(self._sequence, memo))
@@ -272,17 +288,22 @@ class Chain(Sequence):
 
         self._sequences = []
         for seq in sequences:
-            self._sequences.append(self._validate_sequence(seq))
+            seq = self._validate_sequence(seq)
+            if len(seq) > 0:
+                self._sequences.append(seq)
 
         self._sequence_lens = [len(seq) for seq in self._sequences]
         
         if any(_l == INF for _l in self._sequence_lens[:-1]):
             raise InfinityError("Infinity sequence can not be chained except the last.")
 
-        if self._sequence_lens[-1] == INF:
-            self._len = INF
+        if len(self._sequence_lens) > 0:
+            if self._sequence_lens[-1] == INF:
+                self._len = INF
+            else:
+                self._len = sum(self._sequence_lens)
         else:
-            self._len = sum(self._sequence_lens)
+            self._len = 0
 
     def getitem(self, key):
 
@@ -311,7 +332,7 @@ class Product(Sequence):
         self._dimension = len(self._pools)
 
         if any(_l == INF for _l in self._pool_lens):
-            raise InfinityError("Product does not support infinity sequence.")
+            raise InfinityError("Product does not support infinite sequence.")
 
         self._len = reduce(lambda x, y: x*y, self._pool_lens)
 
@@ -338,7 +359,7 @@ class Permutations(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("Permutation do not support infinity sequence.")
+            raise InfinityError("Permutation do not support infinite sequence.")
 
         self._r = self._n if r is None else r
         if self._r > self._n:
@@ -346,26 +367,87 @@ class Permutations(Sequence):
         else:
             self._len = _nPr(self._n, self._r)
 
+#    def _kth(self, k, S, r):   # recursive version
+#        P = []
+#        if len(S) == 0:
+#            return []
+#        elif r > 0:
+#            if len(S) == 1:
+#                return [S[k]]
+#            else:
+#                f = factorial(len(S)-1)
+#                i = int(floor(k/f))
+#                return [S[i]] + self._kth(k%f, S[:i] + S[i+1:], r-1)
+#        else:
+#            return []
+#
+#            i = _nPr(len(l)-1, r-1)
+#def getPerm(seq, index):
+#    "Returns the <index>th permutation of <seq>"
+#    seqc= list(seq[:])
+#    seqn= [seqc.pop()]
+#    divider= 2 # divider is meant to be len(seqn)+1, just a bit faster
+#    while seqc:
+#        index, new_index= index//divider, index%divider
+#        seqn.insert(new_index, seqc.pop())
+#        divider+= 1
+#    return seqn
+
+
+    def _kth(self, k, l, r):
+
+        if r == 0:
+            return []
+        else:
+            inc = _nPr(len(l)-1, r-1)
+            for idx in range(len(l)):
+                if k < (idx+1)*inc:
+                    return Chain([l[idx]], self._kth(k-inc*idx, l[:idx]+l[idx+1:], r-1))
+                #else:
+                #    return self._kth(k-i, l[1:], r)
+
+#    def getitem(self, key):
+#
+#        if self._r == 0:
+#            return tuple()
+#        elif self._r == 1:
+#            return tuple([self._sequence[key]])
+#        else:
+#            seqc = copy.deepcopy(self._sequence)
+#            #seqn = [seqc.pop(0)]
+#            seqn = []
+#            divider= 2
+#            while self._r > len(seqn):
+#                key, new_key= key//divider, key%divider
+#                seqn.insert(new_key, seqc.pop())
+#                divider+= 1
+#
+#            return tuple(seqn)
+
+    def getitem(self, key):
+
+        return tuple(self._kth(key, self._sequence, self._r))
+
     def copy(self, memo={}):
 
         return Permutations(copy.deepcopy(self._sequence, memo), r=self._r)
 
-    def getitem(self, key):
-
-        P = []
-        if self._r == 1:
-            return (self._sequence[key],)
-        elif self._r > 1:
-
-            S = copy.deepcopy(self._sequence)
-            while len(S) > self._n - self._r:
-                f = factorial(len(S)-1)
-                i = int(floor(key/f))
-                x = S[i]
-                key = key%f
-                P.append(x)
-                S = S[:i] + S[i+1:]
-        return tuple(P)
+#    def getitem(self, key):
+#
+#        P = []
+#        if self._r == 1:
+#            return (self._sequence[key],)
+#        elif self._r > 1:
+#
+#            S = copy.deepcopy(self._sequence)
+#            while len(S) > self._n - self._r:
+#                f = factorial(len(S)-1)
+#                i = int(floor(key/f))
+#                x = S[i]
+#                key = key%f
+#                P.append(x)
+#                S = S[:i] + S[i+1:]
+#        return tuple(P)
 
 #def kthperm(S, k):  #  nonrecursive version
 #    P = []
@@ -387,7 +469,7 @@ class Permutations(Sequence):
 #        self._n = len(self._sequence)
 #
 #        if self._n == INF:
-#            raise InfinityError("Permutation do not support infinity sequence.")
+#            raise InfinityError("Permutation do not support infinite sequence.")
 #
 #        self._r = self._n if r is None else r
 #        if self._r > self._n:
@@ -430,6 +512,7 @@ class Permutations(Sequence):
 #        else:
 #            return tuple()
 
+
 class Combinations(Sequence):
 
     def __init__(self, sequence, r):
@@ -439,7 +522,7 @@ class Combinations(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("Combination do not support infinity sequence.")
+            raise InfinityError("Combination do not support infinite sequence.")
 
         self._r = r
 
@@ -457,9 +540,9 @@ class Combinations(Sequence):
         else:
             i = _nCr(len(l)-1, r-1)
             if k < i:
-                return list(l[0:1]) + self._kth(k, l[1:], r-1)
+                return Chain(l[0:1], self._kth(k, l[1:], r-1))
             else:
-                return list(self._kth(k-i, l[1:], r))
+                return self._kth(k-i, l[1:], r)
 
     def getitem(self, key):
 
@@ -478,25 +561,48 @@ class PermutationRange(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("PermutationRange do not support infinity sequence.")
+            raise InfinityError("PermutationRange do not support infinite sequence.")
 
-        self._sub_perms = []
+        sub_perms = []
         self._len = 0
         for r in range(self._n+1):
             perm = Permutations(self._sequence, r=r)
-            self._sub_perms.append(perm)
-            self._len += len(perm)
+            sub_perms.append(perm)
+        self._chain = Chain(*sub_perms)
+        self._len = len(self._chain)
 
     def getitem(self, key):
 
-        accum_len = 0
-        for perm in self._sub_perms:
-            _len = len(perm)
-            if key >= accum_len and key < accum_len + _len:
-                return perm[key - accum_len]
-            accum_len += _len
+        return self._chain[key]
 
     def copy(self, memo={}):
 
         return PermutationRange(copy.deepcopy(self._sequence, memo))
+
+class CombinationRange(Sequence):
+
+    def __init__(self, sequence):
+
+        self._sequence = self._validate_sequence(sequence)
+
+        self._n = len(self._sequence)
+
+        if self._n == INF:
+            raise InfinityError("CombinationRange do not support infinite sequence.")
+
+        sub_combs = []
+        self._len = 0
+        for r in range(self._n+1):
+            comb = Combinations(self._sequence, r=r)
+            sub_combs.append(comb)
+        self._chain = Chain(*sub_combs)
+        self._len = len(self._chain)
+
+    def getitem(self, key):
+
+        return self._chain[key]
+
+    def copy(self, memo={}):
+
+        return CombinationRange(copy.deepcopy(self._sequence, memo))
 
