@@ -20,22 +20,26 @@ INF = float("inf")
 NAN = float("nan")
 
 class InfinityError(Exception):
-    pass
 
-def _nPr(n, r):
+    def __init__(self, obj):
+        clsname = obj.__class__.__name__
+        msg = "'%s' does not support infinite sequence."%clsname
+        super(InfinityError, self).__init__(msg)
+
+def nPr(n, r):
     return factorial(n) // factorial(n-r)
 
-def _nCr(n, r):
+def nCr(n, r):
     return factorial(n) // (factorial(r) * factorial(n-r))
 
-def _nCRr(n, r):
+def nCRr(n, r):
     return factorial(n+r-1) // (factorial(r) * factorial(n-1))
 
 class Sequence(Object):
 
     def __new__(cls, *vargs, **kwargs):
 
-        obj = super(Sequence, cls).__new__(cls, *vargs, **kwargs)
+        obj = super(Sequence, cls).__new__(cls)
         obj._iter_key = 0
 
         return obj
@@ -191,7 +195,15 @@ class Range(Sequence):
 
     def __init__(self, *vargs):
 
-        if len(vargs) == 1:
+        if type(vargs[0]) == type(range(1)):
+            if hasattr(vargs[0], "stop"):
+                self._start, self._stop, self._step = (vargs[0].start,
+                    vargs[0].stop, vargs[0].step)
+            else:
+                diff = vargs[0][1] - vargs[0][0]
+                self._start, self._stop, self._step = (vargs[0][0],
+                    vargs[0][0]+diff, diff)
+        elif len(vargs) == 1:
             self._start, self._stop, self._step = 0, vargs[0], 1
         elif len(vargs) == 2:
             self._start, self._stop, self._step = vargs[0], vargs[1], 1
@@ -308,7 +320,7 @@ class Chain(Sequence):
         self._sequence_lens = [len(seq) for seq in self._sequences]
         
         if any(_l == INF for _l in self._sequence_lens[:-1]):
-            raise InfinityError("Infinity sequence can not be chained except the last.")
+            raise InfinityError(self)
 
         if len(self._sequence_lens) > 0:
             if self._sequence_lens[-1] == INF:
@@ -345,7 +357,7 @@ class Product(Sequence):
         self._dimension = len(self._pools)
 
         if any(_l == INF for _l in self._pool_lens):
-            raise InfinityError("Product does not support infinite sequence.")
+            raise InfinityError(self)
 
         self._len = reduce(lambda x, y: x*y, self._pool_lens)
 
@@ -372,20 +384,20 @@ class Permutations(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("Permutation do not support infinite sequence.")
+            raise InfinityError(self)
 
         self._r = self._n if r is None else r
         if self._r > self._n:
             self._len = 0
         else:
-            self._len = _nPr(self._n, self._r)
+            self._len = nPr(self._n, self._r)
 
     def _kth(self, k, l, r):
 
         if r == 0:
             return []
         else:
-            inc = _nPr(len(l)-1, r-1)
+            inc = nPr(len(l)-1, r-1)
             for idx in range(len(l)):
                 if k < (idx+1)*inc:
                     return Chain([l[idx]], self._kth(k-inc*idx, l[:idx]+l[idx+1:], r-1))
@@ -408,14 +420,14 @@ class Combinations(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("Combination do not support infinite sequence.")
+            raise InfinityError(self)
 
         self._r = r
 
         if r > self._n:
             self._len = 0
         else:
-            self._len = _nCr(self._n, self._r)
+            self._len = nCr(self._n, self._r)
 
     def _kth(self, k, l, r):
 
@@ -424,7 +436,7 @@ class Combinations(Sequence):
         elif len(l) == r:
             return l
         else:
-            i = _nCr(len(l)-1, r-1)
+            i = nCr(len(l)-1, r-1)
             if k < i:
                 return Chain(l[0:1], self._kth(k, l[1:], r-1))
             else:
@@ -447,18 +459,18 @@ class CombinationsR(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("Combination do not support infinite sequence.")
+            raise InfinityError(self)
 
         self._r = r
 
-        self._len = _nCRr(self._n, self._r)
+        self._len = nCRr(self._n, self._r)
 
     def _kth(self, k, l, r):
 
         if r == 0:
             return []
         else:
-            i = _nCRr(len(l), r-1)
+            i = nCRr(len(l), r-1)
             if k < i:
                 return Chain(l[0:1], self._kth(k, l, r-1))
             else:
@@ -481,7 +493,7 @@ class PermutationRange(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("PermutationRange do not support infinite sequence.")
+            raise InfinityError(self)
 
         sub_perms = []
         self._len = 0
@@ -508,7 +520,7 @@ class CombinationRange(Sequence):
         self._n = len(self._sequence)
 
         if self._n == INF:
-            raise InfinityError("CombinationRange do not support infinite sequence.")
+            raise InfinityError(self)
 
         sub_combs = []
         self._len = 0

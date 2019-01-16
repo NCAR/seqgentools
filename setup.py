@@ -4,7 +4,7 @@ short_description = "Sequence Generation Tools"
 
 setup(
     name='seqgentools',
-    version='0.0.2',
+    version='0.0.3',
     description=short_description,
     long_description=short_description,
     author='Youngsung Kim',
