@@ -7,9 +7,15 @@ import abc
 import copy
 from math import ceil, factorial
 
-PY3 = sys.version_info >= (3, 0)
+_PY3 = sys.version_info >= (3, 0)
 
-if PY3:
+# TODO: ensure every sequence has "_sequence", "_len", and "_iter_key" attributes
+#       - handle Count and Range that does not have _sequence
+#       - handle Wrapper that _sequence is not type of Sequence
+# TODO: rename key to index
+# TODO: adjust _sequence after pop method
+
+if _PY3:
     Object = abc.ABCMeta("Object", (object,), {})
     from functools import reduce
     long = int
@@ -25,6 +31,9 @@ class InfinityError(Exception):
         clsname = obj.__class__.__name__
         msg = "'%s' does not support infinite sequence."%clsname
         super(InfinityError, self).__init__(msg)
+
+class IndexNotFound(Exception):
+    pass
 
 def nPr(n, r):
     return factorial(n) // factorial(n-r)
@@ -76,10 +85,21 @@ class Sequence(Object):
                 return self.getitem(key)
             else:
                 clsname = self.__class__.__name__
-                raise IndexError("%s index out of range"%clsname)
+                raise IndexError("Index is out of range at '%s'"%clsname)
 
     def index(self, val):
-        raise NotImplementedError()
+        clsname = self.__class__.__name__
+        raise NotImplementedError("'%s' does not support index() method."%clsname)
+
+    def __contains__(self, val):
+        try:
+            idx = self.index(val)
+            return True
+        except NotImplementedError:
+            clsname = self.__class__.__name__
+            raise NotImplementedError("'%s' does not support 'in' operation."%clsname)
+        except IndexNotFound:
+            return False
 
     def __len__(self):
         return self._len
@@ -112,6 +132,7 @@ class Sequence(Object):
 
     def pop(self, idx=None):
 
+        # TODO: fix a bug of self._sequence
         if idx is None:
             if self._len == INF:
                 raise ValueError(
@@ -131,14 +152,14 @@ class Sequence(Object):
     def _validate_key(self, key):
 
         if not isinstance(key, (int, long)):
-            raise TypeError("Key should be 'int' or 'long' type: %s"%type(key))
+            raise TypeError("Index should be 'int' or 'long' type: %s"%type(key))
 
         if key < 0:
             if self._len == INF:
-                raise TypeError("Negative key for infinite sequence: %d"%key)
+                raise TypeError("Infinite sequence does not support negative index: %d"%key)
             return self._len + key
         elif self._len != INF and key >= self._len:
-            raise IndexError("index '%d' is out of bound"%key)
+            raise IndexError("Index '%d' is out of bound"%key)
 
         return key
 
@@ -150,7 +171,7 @@ class Sequence(Object):
             return Wrapper(sequence)
         else:
             clsname = sequence.__class__.__name__
-            raise TypeError("'%s' does not support len() method."%clsname)
+            raise TypeError("'%s' is not a valid sequenceable type."%clsname)
 
 class Wrapper(Sequence):
 
