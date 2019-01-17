@@ -6,7 +6,7 @@ import itertools as it
 
 MAX = 100
 
-class PrimitiveTests(unittest.TestCase):
+class PrimitiveSequenceTests(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -169,5 +169,5 @@ class PrimitiveTests(unittest.TestCase):
 
         self.assertEqual(len(search_generator), 4)
 
-test_classes = (PrimitiveTests,)
+test_classes = (PrimitiveSequenceTests,)
 
