@@ -14,17 +14,20 @@ MAX = 100
 l = [["foo", "a", "a",], ["bar", "a", "b"], ["lee", "b", "b"]]
 
 class TestGenerator(type):
-    def __new__(mcs, name, bases, dict):
 
+    def __new__(mcs, name, bases, namespace):
+
+        # create test function
         def gen_test(a, b):
             def test(self):
                 self.assertEqual(a, b)
             return test
 
+        # create space
         for tname, a, b in l:
             test_name = "test_%s" % tname
-            dict[test_name] = gen_test(a,b)
-        return type.__new__(mcs, name, bases, dict)
+            namespace[test_name] = gen_test(a,b)
+        return type.__new__(mcs, name, bases, namespace)
 
 _PY3 = sys.version_info >= (3, 0)
 
