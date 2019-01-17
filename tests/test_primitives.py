@@ -151,6 +151,11 @@ class PrimitiveTests(unittest.TestCase):
 
     def test_custom(self):
 
+        # loops
+        # xforms
+        # each xform has its own search space
+        # efficiently genrate search space by xform sees loop information
+
         loop1 = {"indvars": ('a', 'b', 'c')}
         loop2 = {"indvars": ('x', 'y', 'z')}
         loops = (loop1, loop2)
