@@ -13,7 +13,7 @@ MAX = 100
 
 l = [["foo", "a", "a",], ["bar", "a", "b"], ["lee", "b", "b"]]
 
-class TestSequenceMeta(type):
+class TestGenerator(type):
     def __new__(mcs, name, bases, dict):
 
         def gen_test(a, b):
@@ -29,12 +29,11 @@ class TestSequenceMeta(type):
 _PY3 = sys.version_info >= (3, 0)
 
 if _PY3:
-    Object = TestSequenceMeta("Object", (object,), {})
+    Meta = TestGenerator("Meta", (object,), {})
 else:
-    Object = TestSequenceMeta("Object".encode("utf-8"),
-            (object,), {})
+    Meta = TestGenerator("Meta".encode("utf-8"), (object,), {})
 
-class CompoundSequenceTests(Object, unittest.TestCase):
+class CompoundSequenceTests(Meta, unittest.TestCase):
     pass
 
 #class CompoundSequenceTests(unittest.TestCase):
