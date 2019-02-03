@@ -1,4 +1,6 @@
-# seqgentools
+seqgentools
+==============
+
 Sequence Generation Tools
 
 Motivation
@@ -137,7 +139,9 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     ('B',)
 
 NOTE: "seqgentools" support infinite sequence in, not all, but most of sequence generators.
+
 NOTE: testing codes in "tests" subdirectory could be a good place to investigate furtuer.
+
 NOTE: "Wrapper" sequence generator wraps Python sequence data types such as list, tuple, dictionary, string, set, etc.
 
 .. _itertools: https://docs.python.org/3/library/itertools.html
