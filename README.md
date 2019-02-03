@@ -4,18 +4,14 @@ Sequence Generation Tools
 Motivation
 =============
 
-Python `itertools<https://docs.python.org/3/library/itertools.html>`_ package provides users with useful tools that helps to create iterators for efficient loopings." Tools in the package can define a large multi-dimensional arrays succinctly.
+Python itertools_ package provides users with useful tools that helps to create iterators for efficient loopings." Tools in the package can define a large multi-dimensional arrays succinctly.
 
 For example, following code snippets generate a 3-dimensional space that has 1,000 data points:
-
-.. code-block:: python
 
     >>> for x,y,z in itertools.product(range(10), repeat=3):
     >>>     # DO work on each "point of (x,y,z)"
 
-However, itertools has one critical drawback to be used as a search space generator for Machine-learning techniques: Its element should be accessed sequentially. For example, to access to the last point of (9,9,9) in previous code example, you need to go through all 999 elements from (0,0,0) to (9,9,8). It is because Python iterator does not support indexing. Next code examples shows that iterator can not be index.
-
-.. code-block:: python
+However, itertools_ has one critical drawback to be used as a search space generator for Machine-learning techniques: Its element should be accessed sequentially. For example, to access to the last point of (9,9,9) in previous code example, you need to go through all 999 elements from (0,0,0) to (9,9,8). It is because Python iterator does not support indexing. Next code examples shows that iterator can not be index.
 
     >>> space = itertools.product(range(10), repeat=3)
     >>> space[999]
@@ -23,9 +19,7 @@ However, itertools has one critical drawback to be used as a search space genera
       File "<stdin>", line 1, in <module>
     TypeError: 'itertools.product' object is not subscriptable
 
-"seqgentools" takes core capability of "itertools" and adds indexing capability. 
-
-.. code-block:: python
+"seqgentools" takes core capability of "itertools_" and adds indexing capability. 
 
     >>> import seqgentools as sgt
     >>> space = sgt.Product(range(10), repeat=3)
@@ -38,35 +32,29 @@ Installation
 
 Best way to install "seqgentools" is using "pip" as shown below.
 
-.. code-block:: bash
-
     >>> pip install seqgentools --user
 
 To access the latest version, please download from this site using git.
-
-.. code-block:: bash
 
     >>> git clone https://github.com/NCAR/seqgentools.git
 
 Getting-started
 =================
 
-Whenever possible, "seqgentools" follows conventions of using "itertools" so that user can leverage of their knowledge. One obvious difference between "seqgentools" and "itertools" is that seqgentools allows indexing using brackets of "[" and "]". The other notable difference is that, in "seqgentools", the name of sequence genrators starts with a capital letter while "itertools" starts with a lower-cases. This is to emphasis that sequence generators are genrated from class, not from function.
+Whenever possible, "seqgentools" follows conventions of using "itertools_" so that user can leverage of their knowledge. One obvious difference between "seqgentools" and "itertools_" is that seqgentools allows indexing using brackets of "[" and "]". The other notable difference is that, in "seqgentools", the name of sequence genrators starts with a capital letter while "itertools_" starts with a lower-cases. This is to emphasize that sequence generators are genrated from class, not from function.
 
 As of this version, "seqgentools" implemented follwoing sequence generators.
 
-    * Count:  
-    * Cycle:
-    * Repeat:
-    * Chain:
-    * Product:
-    * Permutations:
-    * Combinations:
-    * PermutationRange:
-    * CombinationRange
-    * Wrapper: 
-
-.. code-block:: python
+    * Count: generates a sequence of, possibily infinite, numbers 
+    * Cycle: generates a cyclic sequence of another sequence
+    * Repeat: generates a repeating sequece of object
+    * Chain: generate a chained seqnece of another sequences
+    * Product: generate a sequence of mathematical product of another sequences
+    * Permutations: generate a permuted sequence of another sequence
+    * Combinations: generate a combinated sequence of another sequence
+    * PermutationRange: generate a chained sequence of series of permuted sequence ranging r=0 to r=n of another sequence
+    * CombinationRange: generate a chained sequence of series of combinated sequence ranging r=0 to r=n of another sequence
+    * Wrapper: genearte a sequence from Python sequece data types
 
     >>> import seqgentools as sgt
     >>>
@@ -102,7 +90,8 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     >>>
     >>> perm = seq.Permutations("ABC", 2)
     >>> list(perm)
-    [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+    [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'),
+        ('C', 'B')]
     >>> perm[3]
     ('B', 'C')
     >>>
@@ -118,7 +107,9 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     >>>
     >>> permrange = seq.PermutationRange("ABC")
     >>> list(permrange)
-    [(), ('A',), ('B',), ('C',), ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B'), ('A', 'B', 'C'), ('A', 'C', 'B'), ('B', 'A', 'C'), ('B', 'C', 'A'), ('C', 'A', 'B'), ('C', 'B', 'A')]
+    [(), ('A',), ('B',), ('C',), ('A', 'B'), ('A', 'C'), ('B', 'A'),
+        ('B', 'C'), ('C', 'A'), ('C', 'B'), ('A', 'B', 'C'), ('A', 'C', 'B'),
+        ('B', 'A', 'C'), ('B', 'C', 'A'), ('C', 'A', 'B'), ('C', 'B', 'A')]
     >>> permrange[3]
     ('C',)
     >>>
@@ -126,10 +117,13 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     >>>
     >>> combrange = seq.CombinationRange("ABC")
     >>> list(combrange)
-    [(), ('A',), ('B',), ('C',), ('A', 'B'), ('A', 'C'), ('B', 'C'), ('A', 'B', 'C')]
+    [(), ('A',), ('B',), ('C',), ('A', 'B'), ('A', 'C'), ('B', 'C'),
+        ('A', 'B', 'C')]
     >>> combrange[2]
     ('B',)
 
 NOTE: "seqgentools" support infinite sequence in, not all, but most of sequence generators.
 NOTE: testing codes in "tests" subdirectory could be a good place to investigate furtuer.
 NOTE: "Wrapper" sequence generator wraps Python sequence data types such as list, tuple, dictionary, string, set, etc.
+
+.. _itertools: https://docs.python.org/3/library/itertools.html
