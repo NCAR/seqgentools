@@ -142,7 +142,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
 [NOTES]
 
     * "seqgentools" supports infinite sequence in, not all, but most of sequence generators.
-    * test codes in "tests" subdirectory could be a good place to start further investigate.
+    * test codes in "tests" subdirectory could be a good place to start further investigation.
     * "Wrapper" sequence generator wraps Python sequence data types such as list, tuple, dictionary, string, set, etc.
 
 .. _itertools: https://docs.python.org/3/library/itertools.html
