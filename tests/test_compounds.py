@@ -11,7 +11,7 @@ import itertools as it
 
 MAX = 100
 
-l = [["foo", "a", "a",], ["bar", "a", "b"], ["lee", "b", "b"]]
+l = [["foo", "a", "a",], ["bar", "c", "c"], ["lee", "b", "b"]]
 
 class TestGenerator(type):
 
