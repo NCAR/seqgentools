@@ -56,6 +56,8 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     * CombinationRange: generate a chained sequence of series of combinated sequence ranging r=0 to r=n of another sequence
     * Wrapper: genearte a sequence from Python sequece data types
 
+[seqgentools examples]
+
     >>> import seqgentools as sgt
     >>>
     >>> ###### Count #######
