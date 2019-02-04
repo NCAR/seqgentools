@@ -6,7 +6,7 @@ Sequence Generation Tools
 Motivation
 =============
 
-Python itertools_ package provides users with capability of creating "iterators for efficient loopings". From the prospectives of machine-learning techniques, "itertools" could be a good tool to define a large multi-dimensional arrays succinctly.
+Python itertools_ package provides users with capability of creating "iterators for efficient loopings". From the prospectives of machine-learning techniques, "itertools" could be a good tool to define a large multi-dimensional arrays succinctly without actually allocating memory for the arrays.
 
 For example, following code snippet generates a 3-dimensional space that has 1,000 data points:
 
