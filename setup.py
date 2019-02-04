@@ -1,18 +1,28 @@
 from setuptools import setup, find_packages
 
-short_description = "Sequence Generation Tools"
+short_description = "Sequence Generation Tools inspired by Python itertools."
+long_description = """
+"seqgentools" takes the core capabilities of "itertools_" and adds indexing capability to them. 
+
+    >>> import seqgentools as seq
+    >>> space = seq.Product(range(10), repeat=3)
+    >>> space[999]
+    (9, 9, 9)
+
+Please visit "https://github.com/NCAR/seqgentools" for more details.
+"""
 
 setup(
     name='seqgentools',
-    version='0.0.7',
+    version='0.0.8',
     description=short_description,
-    long_description=short_description,
+    long_description=long_description,
     author='Youngsung Kim',
     author_email='youngsun@ucar.edu',
     license='MIT',
     packages=find_packages(),
     test_suite="tests.seqgentools_unittest_suite",
-    url='https://github.com/grnydawn/seqgentools',
+    url='https://github.com/NCAR/seqgentools',
     classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
