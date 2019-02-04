@@ -505,7 +505,7 @@ class Combinations(Sequence):
         else:
             return nCr(self._n, self._r)
 
-class CombinationsR(Sequence):
+class Combinations_with_replacement(Sequence):
 
     def __init__(self, sequence, r):
 
@@ -535,7 +535,7 @@ class CombinationsR(Sequence):
 
     def copy(self, memo={}):
 
-        return CombinationsR(copy.deepcopy(self._sequence, memo),
+        return Combinations_with_replacement(copy.deepcopy(self._sequence, memo),
                 self._r)
 
     def length(self):

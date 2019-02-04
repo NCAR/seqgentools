@@ -106,6 +106,14 @@ Doing is believing: please follow examples shown below to get an idea of how "se
     >>> comb[2]
     ('B', 'C')
     >>>
+    >>> ###### Combinations_with_replacement #######
+    >>>
+    >>> combr = seq.Combinations_with_replacement("ABC", 2)
+    >>> list(combr)
+    [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'B'), ('B', 'C'), ('C', 'C')]
+    >>> combr[2]
+    ('A', 'C')
+    >>>
     >>> ###### PermutationRange #######
     >>>
     >>> permrange = seq.PermutationRange("ABC")
@@ -134,6 +142,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     * Product:          generates a sequence of mathematical product of another sequences
     * Permutations:     generates a permuted sequence of another sequence
     * Combinations:     generates a combinated sequence of another sequence
+    * Combinations_with_replacement: generates a combinated sequence of another sequence with replacement
     * PermutationRange: generates a chained sequence of series of permuted sequence
                         ranging r=0 to r=n of another sequence
     * CombinationRange: generates a chained sequence of series of combinated sequence
@@ -151,8 +160,8 @@ Until API documentation is ready, please see "itertools_" API documentation as "
 [NOTES]
 
     * "seqgentools" supports indexing of infinite sequences.
-    * "Product", "Permutations", "Combinations", "PermutationRange", and "CombinationRange" do not
-      accept infinite sequence as their input(s).
+    * "Product", "Permutations", "Combinations", "Combinations_with_replacement", "PermutationRange",
+      and "CombinationRange" do not accept infinite sequence as their input(s).
     * test codes in "tests" subdirectory could be a good place to start further investigation.
     * "Wrapper" sequence generator wraps Python sequence data types such as list, tuple, dictionary, string, set, etc.
     * The name of sequence generators in "seqgentools" starts with a capital letter while "itertools_"

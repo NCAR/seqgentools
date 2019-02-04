@@ -134,8 +134,8 @@ class PrimitiveSequenceTests(unittest.TestCase):
 
         l = range(5)
         for r in range(len(l)+1):
-            self._iter_equals(sgt.CombinationsR(l,r), it.combinations_with_replacement(l,r))
-        self._iter_equals(sgt.CombinationsR(l,len(l)*2), it.combinations_with_replacement(l,len(l)*2))
+            self._iter_equals(sgt.Combinations_with_replacement(l,r), it.combinations_with_replacement(l,r))
+        self._iter_equals(sgt.Combinations_with_replacement(l,len(l)*2), it.combinations_with_replacement(l,len(l)*2))
 
     def test_permutationrange(self):
 
