@@ -29,8 +29,8 @@ However, itertools_ has one critical drawback to be used as a search space gener
 
 .. code-block:: python
 
-    >>> import seqgentools as sgt
-    >>> space = sgt.Product(range(10), repeat=3)
+    >>> import seqgentools as seq
+    >>> space = seq.Product(range(10), repeat=3)
     >>> space[999]
     (9, 9, 9)
 
