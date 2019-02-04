@@ -5,6 +5,7 @@ import seqgentools as sgt
 import itertools as it
 
 MAX = 100
+DEBUG = False
 
 class PrimitiveSequenceTests(unittest.TestCase):
 
@@ -21,7 +22,13 @@ class PrimitiveSequenceTests(unittest.TestCase):
             ref = next(iterable2, None) 
             if val is None and ref is None:
                 break
-            self.assertEqual(val, ref)
+            try:
+                self.assertEqual(val, ref)
+            except:
+                if DEBUG:
+                    import pdb; pdb.set_trace()
+                else:
+                    reraise
             if N is not True:
                 N -= 1
 
@@ -151,6 +158,7 @@ class PrimitiveSequenceTests(unittest.TestCase):
 
     def test_custom(self):
 
+        # TODO: complete this test
         # loops
         # xforms
         # each xform has its own search space

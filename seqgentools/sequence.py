@@ -387,7 +387,9 @@ class Chain(Sequence):
 
 class Product(Sequence):
 
-    def __init__(self, *sequences, repeat=1):
+    def __init__(self, *sequences, **kwargs):
+
+        repeat = kwargs.pop("repeat", 1)
 
         self._pools = []
         for _ in range(repeat):

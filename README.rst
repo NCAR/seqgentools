@@ -6,7 +6,7 @@ Sequence Generation Tools
 Motivation
 =============
 
-Python itertools_ package provides users with capability of creating "iterators for efficient loopings". From machine-learning prospective, with "itertools", user can define a large multi-dimensional arrays succinctly.
+Python itertools_ package provides users with capability of creating "iterators for efficient loopings". From the prospectives of machine-learning techniques, "itertools" could be a good tool to define a large multi-dimensional arrays succinctly.
 
 For example, following code snippet generates a 3-dimensional space that has 1,000 data points:
 
@@ -15,7 +15,7 @@ For example, following code snippet generates a 3-dimensional space that has 1,0
     >>> for x,y,z in itertools.product(range(10), repeat=3):
     >>>     # DO work on each "point of (x,y,z)"
 
-However, itertools_ has one critical drawback to be used as a search space generator for Machine-learning techniques: Its element should be accessed sequentially. For example, to access to the last point of (9,9,9) in previous code example, you need to go through all 999 elements from (0,0,0) to (9,9,8). It is because Python iterator does not support indexing. Next code examples show that iterator can not be index.
+However, itertools_ has one critical drawback to be used as a search space generator for Machine-learning techniques: Its element should be accessed sequentially. For example, to access to the last point of (9,9,9) in previous code example, you need to go through all 999 elements from (0,0,0) to (9,9,8). It is because Python iterator does not support indexing. Next code example shows that iterator can not be indexed.
 
 .. code-block:: python
 
@@ -25,7 +25,7 @@ However, itertools_ has one critical drawback to be used as a search space gener
       File "<stdin>", line 1, in <module>
     TypeError: 'itertools.product' object is not subscriptable
 
-"seqgentools" takes core capability of "itertools_" and adds indexing capability. 
+"seqgentools" takes the core capabilities of "itertools_" and adds indexing capability to them. 
 
 .. code-block:: python
 
@@ -68,7 +68,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
                         ranging r=0 to r=n of another sequence
     * CombinationRange: generates a chained sequence of series of combinated sequence
                         ranging r=0 to r=n of another sequence
-    * Wrapper:          geneartes a sequences from Python sequece data types
+    * Wrapper:          generates a sequence from Python sequece data types
 
 [seqgentools examples]
 
@@ -143,7 +143,9 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
 
 [NOTES]
 
-    * "seqgentools" supports infinite sequence in, not all, but most of sequence generators.
+    * "seqgentools" supports indexing of infinite sequences.
+    * "Product", "Permutations", "Combinations", "PermutationRange", and "CombinationRange" do not
+      accept infinit sequence as their input(s).
     * test codes in "tests" subdirectory could be a good place to start further investigation.
     * "Wrapper" sequence generator wraps Python sequence data types such as list, tuple, dictionary, string, set, etc.
 
