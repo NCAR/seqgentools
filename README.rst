@@ -53,7 +53,7 @@ To access the latest features, please download from this repository using git.
 Getting-started
 =================
 
-Whenever possible, "seqgentools" follows conventions of using "itertools_" so that user can leverage of their knowledge about "itertools_". If you are not familiar with "_itertools_", I believe, it is worth of investing a couple of miniutes to see what it can do for you.
+Whenever possible, "seqgentools" follows conventions of using "itertools_" so that user can leverage of their knowledge about "itertools_". If you are not familiar with "itertools_", I believe, it is worth of investing a couple of miniutes to see what it can do for you.
 
 Doing is believing: please follow examples shown below to get an idea of how "seqgentools" works.
 
