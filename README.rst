@@ -140,6 +140,14 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
                         ranging r=0 to r=n of another sequence
     * Wrapper:          generates a sequence from Python sequece data types
 
+API Documentation
+=================
+
+Under development.
+
+Until API documentation is ready, please see "itertools_" API documentation as "seqgentools", whenever possible, follows "itertools_" API.
+
+
 [NOTES]
 
     * "seqgentools" supports indexing of infinite sequences.
