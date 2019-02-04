@@ -60,7 +60,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     * Count:            generates a sequence of, possibily infinite, evenly spaced numbers 
     * Cycle:            generates a cyclic chain of another sequence
     * Repeat:           generates a repeating sequece of object
-    * Chain:            generates a chained seqnece of another sequences
+    * Chain:            generates a chained sequence of another sequences
     * Product:          generates a sequence of mathematical product of another sequences
     * Permutations:     generates a permuted sequence of another sequence
     * Combinations:     generates a combinated sequence of another sequence
@@ -74,7 +74,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
 
 .. code-block:: python
 
-    >>> import seqgentools as sgt
+    >>> import seqgentools as seq
     >>>
     >>> ###### Count #######
     >>>
@@ -145,7 +145,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
 
     * "seqgentools" supports indexing of infinite sequences.
     * "Product", "Permutations", "Combinations", "PermutationRange", and "CombinationRange" do not
-      accept infinit sequence as their input(s).
+      accept infinite sequence as their input(s).
     * test codes in "tests" subdirectory could be a good place to start further investigation.
     * "Wrapper" sequence generator wraps Python sequence data types such as list, tuple, dictionary, string, set, etc.
 
