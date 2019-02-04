@@ -53,24 +53,9 @@ To access the latest features, please download from this repository using git.
 Getting-started
 =================
 
-Whenever possible, "seqgentools" follows conventions of using "itertools_" so that user can leverage of their knowledge. One obvious difference between "seqgentools" and "itertools_" is that seqgentools allows indexing using brackets of "[" and "]". The other notable difference is that, in "seqgentools", the name of sequence generators starts with a capital letter while "itertools_" starts with a lower-case. This is to emphasize that sequence generators are instantiated from class, not from function.
+Whenever possible, "seqgentools" follows conventions of using "itertools_" so that user can leverage of their knowledge about "itertools_". If you are not familiar with "_itertools_", I believe, it is worth of investing a couple of miniutes to see what it can do for you.
 
-As of this version, "seqgentools" implemented follwoing sequence generators.
-
-    * Count:            generates a sequence of, possibily infinite, evenly spaced numbers 
-    * Cycle:            generates a cyclic chain of another sequence
-    * Repeat:           generates a repeating sequece of object
-    * Chain:            generates a chained sequence of another sequences
-    * Product:          generates a sequence of mathematical product of another sequences
-    * Permutations:     generates a permuted sequence of another sequence
-    * Combinations:     generates a combinated sequence of another sequence
-    * PermutationRange: generates a chained sequence of series of permuted sequence
-                        ranging r=0 to r=n of another sequence
-    * CombinationRange: generates a chained sequence of series of combinated sequence
-                        ranging r=0 to r=n of another sequence
-    * Wrapper:          generates a sequence from Python sequece data types
-
-[seqgentools examples]
+Doing is believing: please follow examples shown below to get an idea of how "seqgentools" works.
 
 .. code-block:: python
 
@@ -140,6 +125,20 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     >>> combrange[2]
     ('B',)
 
+As of this version, "seqgentools" implemented follwoing sequence generators.
+
+    * Count:            generates a sequence of, possibily infinite, evenly spaced numbers 
+    * Cycle:            generates a cyclic chain of another sequence
+    * Repeat:           generates a repeating sequece of object
+    * Chain:            generates a chained sequence of another sequences
+    * Product:          generates a sequence of mathematical product of another sequences
+    * Permutations:     generates a permuted sequence of another sequence
+    * Combinations:     generates a combinated sequence of another sequence
+    * PermutationRange: generates a chained sequence of series of permuted sequence
+                        ranging r=0 to r=n of another sequence
+    * CombinationRange: generates a chained sequence of series of combinated sequence
+                        ranging r=0 to r=n of another sequence
+    * Wrapper:          generates a sequence from Python sequece data types
 
 [NOTES]
 
@@ -148,5 +147,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
       accept infinite sequence as their input(s).
     * test codes in "tests" subdirectory could be a good place to start further investigation.
     * "Wrapper" sequence generator wraps Python sequence data types such as list, tuple, dictionary, string, set, etc.
+    * The name of sequence generators in "seqgentools" starts with a capital letter while "itertools_"
+      starts with a lower-case. This is to emphasize that sequence generators are instantiated from class, not from function.
 
 .. _itertools: https://docs.python.org/3/library/itertools.html
