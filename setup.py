@@ -7,7 +7,7 @@ with open("README.rst") as f:
 
 setup(
     name='seqgentools',
-    version='0.0.12',
+    version='0.0.13',
     description=short_description,
     long_description=long_description,
     author='Youngsung Kim',

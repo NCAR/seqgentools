@@ -25,7 +25,7 @@ However, itertools_ has one critical drawback to be used as a search space gener
       File "<stdin>", line 1, in <module>
     TypeError: 'itertools.product' object is not subscriptable
 
-"seqgentools" takes the core capabilities of "itertools_" and adds indexing capability to them. 
+"seqgentools" takes the core capabilities of "itertools_" and adds randomly-accessible indexing capability to them. 
 
 .. code-block:: python
 
@@ -159,7 +159,7 @@ Until API documentation is ready, please see "itertools_" API documentation as "
 
 [NOTES]
 
-    * "seqgentools" supports indexing of infinite sequences.
+    * "seqgentools" supports randomly accessible indexing of infinite sequences.
     * "Product", "Permutations", "Combinations", "Combinations_with_replacement", "PermutationRange",
       and "CombinationRange" do not accept infinite sequence as their input(s).
     * test codes in "tests" subdirectory could be a good place to start further investigation.
