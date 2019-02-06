@@ -6,7 +6,7 @@ Sequence Generation Tools
 Motivation
 =============
 
-Python itertools_ package provides users with capability of creating "iterators for efficient loopings". From the prospectives of machine-learning techniques, "itertools" could be a good tool to define a large multi-dimensional array succinctly without actually allocating memory for the array.
+Python itertools_ package provides users with capability of creating "iterators for efficient loopings". From the prospective of "optimization problems", "itertools" could be a convinient tool to succinctly define a, possibly large, search space without actually allocating memory for the instance of the space.
 
 For example, following code snippet generates a 3-dimensional space that has 1,000 data points:
 
@@ -15,7 +15,7 @@ For example, following code snippet generates a 3-dimensional space that has 1,0
     >>> for x,y,z in itertools.product(range(10), repeat=3):
     >>>     # DO work on each "point of (x,y,z)"
 
-However, itertools_ has one critical drawback to be used as a search space generator for Machine-learning techniques: Its element should be accessed sequentially. For example, to access to the last point of (9,9,9) in previous code example, you need to go through all 999 elements from (0,0,0) to (9,9,8). It is because Python iterator does not support indexing. Next code example shows that iterator can not be indexed.
+However, itertools_ has one critical drawback to be used as a search space generator for search algorithms: Its element should be accessed sequentially. For example, to access to the last point of (9,9,9) in previous code example, you need to go through all 999 elements from (0,0,0) to (9,9,8). It is because Python iterator does not support indexing. Next code example shows that iterator can not be indexed.
 
 .. code-block:: python
 
