@@ -6,10 +6,11 @@ from __future__ import (unicode_literals, print_function,
 import sys
 import abc
 import copy
-from math import ceil, factorial
+import math
 
 _PY3 = sys.version_info >= (3, 0)
 
+# TODO: support cache for all Sequences
 # TODO: support pop method
 
 if _PY3:
@@ -33,14 +34,6 @@ class InfiniteSequenceError(Exception):
 class IndexNotFound(Exception):
     pass
 
-def nPr(n, r):
-    return factorial(n) // factorial(n-r)
-
-def nCr(n, r):
-    return factorial(n) // (factorial(r) * factorial(n-r))
-
-def nCRr(n, r):
-    return factorial(n+r-1) // (factorial(r) * factorial(n-1))
 
 class Sequence(Object):
 
@@ -224,7 +217,7 @@ class Slice(Sequence):
         if _len == INF:
             return INF
         else:
-            return int(ceil(_len)) if _len > 0 else 0
+            return int(math.ceil(_len)) if _len > 0 else 0
 
 class Range(Sequence):
 
@@ -267,7 +260,7 @@ class Range(Sequence):
         if _len == INF:
             return INF
         else:
-            return int(ceil(_len)) if _len > 0 else 0
+            return int(math.ceil(_len)) if _len > 0 else 0
 
 class Count(Sequence):
 
@@ -385,217 +378,3 @@ class Chain(Sequence):
         else:
             return 0
 
-class Product(Sequence):
-
-    def __init__(self, *sequences, **kwargs):
-
-        repeat = kwargs.pop("repeat", 1)
-
-        self._pools = []
-        for _ in range(repeat):
-            for seq in sequences:
-                self._pools.append(self._validate_sequence(seq))
-
-        self._pools.reverse()
-        self._pool_lens = [seq.length() for seq in self._pools]
-        self._dimension = len(self._pools)
-
-        if any(_l == INF for _l in self._pool_lens):
-            raise InfiniteSequenceError(self)
-
-    def getitem(self, index):
-
-        product = [None]*self._dimension
-        for dim, (_len, seq) in enumerate(zip(self._pool_lens,
-                self._pools)):
-            product[self._dimension-dim-1] = seq[index % _len]
-            index = index // _len
-
-        return tuple(product)
-
-    def copy(self, memo={}):
-
-        seqs = [copy.deepcopy(s, memo) for s in self._sequences]
-        return Product(*seqs)
-
-    def length(self):
-
-        return reduce(lambda x, y: x*y, self._pool_lens)
-
-class Permutations(Sequence):
-
-    def __init__(self, sequence, r=None):
-
-        self._sequence = self._validate_sequence(sequence)
-
-        self._n = self._sequence.length()
-
-        if self._n == INF:
-            raise InfiniteSequenceError(self)
-
-        self._r = self._n if r is None else r
-
-    def _kth(self, k, l, r):
-
-        if r == 0:
-            return []
-        else:
-            inc = nPr(l.length()-1, r-1)
-            for idx in range(l.length()):
-                if k < (idx+1)*inc:
-                    return Chain([l[idx]], self._kth(k-inc*idx,
-                        l[:idx]+l[idx+1:], r-1))
-
-    def getitem(self, index):
-
-        return tuple(self._kth(index, self._sequence, self._r))
-
-    def copy(self, memo={}):
-
-        return Permutations(copy.deepcopy(self._sequence, memo),
-                r=self._r)
-
-    def length(self):
-
-        if self._r > self._n:
-            return 0
-        else:
-            return nPr(self._n, self._r)
-
-class Combinations(Sequence):
-
-    def __init__(self, sequence, r):
-
-        self._sequence = self._validate_sequence(sequence)
-
-        self._n = self._sequence.length()
-
-        if self._n == INF:
-            raise InfiniteSequenceError(self)
-
-        self._r = r
-
-
-    def _kth(self, k, l, r):
-
-        if r == 0:
-            return []
-        elif l.length() == r:
-            return l
-        else:
-            i = nCr(l.length()-1, r-1)
-            if k < i:
-                return Chain(l[0:1], self._kth(k, l[1:], r-1))
-            else:
-                return self._kth(k-i, l[1:], r)
-
-    def getitem(self, index):
-
-        return tuple(self._kth(index, self._sequence, self._r))
-
-    def copy(self, memo={}):
-
-        return Combinations(copy.deepcopy(self._sequence, memo),
-                self._r)
-
-    def length(self):
-
-        if self._r > self._n:
-            return 0
-        else:
-            return nCr(self._n, self._r)
-
-class Combinations_with_replacement(Sequence):
-
-    def __init__(self, sequence, r):
-
-        self._sequence = self._validate_sequence(sequence)
-
-        self._n = self._sequence.length()
-
-        if self._n == INF:
-            raise InfiniteSequenceError(self)
-
-        self._r = r
-
-    def _kth(self, k, l, r):
-
-        if r == 0:
-            return []
-        else:
-            i = nCRr(l.length(), r-1)
-            if k < i:
-                return Chain(l[0:1], self._kth(k, l, r-1))
-            else:
-                return self._kth(k-i, l[1:], r)
-
-    def getitem(self, index):
-
-        return tuple(self._kth(index, self._sequence, self._r))
-
-    def copy(self, memo={}):
-
-        return Combinations_with_replacement(copy.deepcopy(self._sequence, memo),
-                self._r)
-
-    def length(self):
-
-        return nCRr(self._n, self._r)
-
-class PermutationRange(Sequence):
-
-    def __init__(self, sequence):
-
-        self._sequence = self._validate_sequence(sequence)
-
-        self._n = self._sequence.length()
-
-        if self._n == INF:
-            raise InfiniteSequenceError(self)
-
-        sub_perms = []
-        for r in range(self._n+1):
-            perm = Permutations(self._sequence, r=r)
-            sub_perms.append(perm)
-        self._chain = Chain(*sub_perms)
-
-    def getitem(self, index):
-
-        return self._chain[index]
-
-    def copy(self, memo={}):
-
-        return PermutationRange(copy.deepcopy(self._sequence, memo))
-
-    def length(self):
-
-        return self._chain.length()
-
-class CombinationRange(Sequence):
-
-    def __init__(self, sequence):
-
-        self._sequence = self._validate_sequence(sequence)
-
-        self._n = self._sequence.length()
-
-        if self._n == INF:
-            raise InfiniteSequenceError(self)
-
-        sub_combs = []
-        for r in range(self._n+1):
-            comb = Combinations(self._sequence, r=r)
-            sub_combs.append(comb)
-        self._chain = Chain(*sub_combs)
-
-    def getitem(self, index):
-
-        return self._chain[index]
-
-    def copy(self, memo={}):
-
-        return CombinationRange(copy.deepcopy(self._sequence, memo))
-
-    def length(self):
-
-        return self._chain.length()
