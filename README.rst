@@ -1,7 +1,7 @@
 seqgentools
 ==============
 
-Sequence Generation Tools
+Python combinatorics library that generates indexible sequences through combinations, permutations, and/or products of another sequences. It creates the sequences without actually allocating memory so that a sequence having a large, possibly infinite, number of elements can be used in many applications such as an optimal solution searching problem.
 
 Motivation
 =============
