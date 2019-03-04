@@ -61,26 +61,6 @@ Doing is believing: please follow examples shown below to get an idea of how "se
 
     >>> import seqgentools as seq
     >>>
-    >>> ###### Count #######
-    >>>
-    >>> seq.Count(10)[10]
-    20
-    >>>
-    >>> ###### Cycle #######
-    >>>
-    >>> seq.Cycle((1,2,3))[10]
-    2
-    >>>
-    >>> ###### Repeat #######
-    >>>
-    >>> seq.Repeat(1)[10]
-    1
-    >>>
-    >>> ###### Chain #######
-    >>>
-    >>> list(seq.Chain(range(3), range(4)))
-    [0, 1, 2, 0, 1, 2, 3]
-    >>>
     >>> ###### Product #######
     >>>
     >>> prod = seq.Product(range(2), range(2))
@@ -133,6 +113,19 @@ Doing is believing: please follow examples shown below to get an idea of how "se
     >>> combrange[2]
     ('B',)
 
+Search-space Generator
+=======================
+
+"seqgentools" contains a hierachical search space generator that can dramatically reduce
+  the total size of search space compared to naive products of each search dimensions.
+
+API Documentation
+=================
+
+Under development.
+
+Until API documentation is ready, please see "itertools_" API documentation as "seqgentools", whenever possible, follows "itertools_" API.
+
 As of this version, "seqgentools" implemented follwoing sequence generators.
 
     * Count:            generates a sequence of, possibily infinite, evenly spaced numbers 
@@ -148,14 +141,7 @@ As of this version, "seqgentools" implemented follwoing sequence generators.
     * CombinationRange: generates a chained sequence of series of combinated sequence
                         ranging r=0 to r=n of another sequence
     * Wrapper:          generates a sequence from Python sequece data types
-
-API Documentation
-=================
-
-Under development.
-
-Until API documentation is ready, please see "itertools_" API documentation as "seqgentools", whenever possible, follows "itertools_" API.
-
+    * Fibonacci:        generates an random-accesible Fibonacci sequence
 
 [NOTES]
 

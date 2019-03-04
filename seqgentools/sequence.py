@@ -41,6 +41,8 @@ class Sequence(Object):
 
         obj = super(Sequence, cls).__new__(cls)
         obj._iter_index = 0
+        obj._cache = kwargs.pop("cache", {})
+        obj._cache_limit = kwargs.pop("cache_limit", 1024)
 
         return obj
 
@@ -74,9 +76,15 @@ class Sequence(Object):
             return Slice(self, index)
         else:
             index = self._validate_index(index)
-
+            
             if index < self.length():
-                return self.getitem(index)
+                if index in self._cache:
+                    return self._cache[index]
+                else:
+                    value = self.getitem(index)
+                    if self._cache_limit and len(self._cache) < self._cache_limit:
+                        self._cache[index] = value
+                    return value
             else:
                 clsname = self.__class__.__name__
                 raise IndexError(
