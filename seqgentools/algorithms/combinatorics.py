@@ -3,10 +3,17 @@
 from __future__ import (unicode_literals, print_function,
         division)
 
+import sys
 from math import factorial
 import copy
 
 from seqgentools.sequence import Sequence, Chain, INF
+
+_PY3 = sys.version_info >= (3, 0)
+
+if _PY3:
+    from functools import reduce
+    long = int
 
 def nPr(n, r):
     return factorial(n) // factorial(n-r)
