@@ -46,7 +46,7 @@ class AlgorithmTests(unittest.TestCase):
 
     def test_fibonacci_nocache(self):
 
-        fibo = seq.Fibonacci(cache=None)
+        fibo = seq.Fibonacci(cache_limit=None)
         for n in range(20):
             self.assertEqual(fibo[n], _fibo(n))
 

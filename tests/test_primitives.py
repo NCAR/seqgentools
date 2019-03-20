@@ -5,7 +5,7 @@ import seqgentools as sgt
 import itertools as it
 
 MAX = 100
-DEBUG = False
+DEBUG = True
 
 class PrimitiveSequenceTests(unittest.TestCase):
 
@@ -24,11 +24,11 @@ class PrimitiveSequenceTests(unittest.TestCase):
                 break
             try:
                 self.assertEqual(val, ref)
-            except:
+            except Exception as err:
                 if DEBUG:
                     import pdb; pdb.set_trace()
                 else:
-                    reraise
+                    raise
             if N is not True:
                 N -= 1
 
@@ -147,6 +147,16 @@ class PrimitiveSequenceTests(unittest.TestCase):
 
         self._iter_equals(sgtpermrange, itpermrange)
 
+    def test_partialpermutationrange(self):
+
+        l = range(5)
+
+        perms = [it.permutations(l, r=r) for r in range(2, 4)]
+        itpermrange = it.chain(*perms)
+        sgtpermrange = sgt.PermutationRange(l, start=2, stop=4)
+
+        self._iter_equals(sgtpermrange, itpermrange)
+
     def test_combinationrange(self):
 
         l = range(5)
@@ -155,6 +165,13 @@ class PrimitiveSequenceTests(unittest.TestCase):
         combrange = it.chain(*comb)
         self._iter_equals(sgt.CombinationRange(l), combrange)
 
+    def test_partialcombinationrange(self):
+
+        l = range(5)
+
+        comb = [it.combinations(l, r=r) for r in range(1, len(l), 2)]
+        combrange = it.chain(*comb)
+        self._iter_equals(sgt.CombinationRange(l, start=1, stop=len(l), step=2), combrange)
 
     def test_custom(self):
 

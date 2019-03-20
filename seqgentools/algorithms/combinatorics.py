@@ -183,7 +183,7 @@ class Combinations_with_replacement(Sequence):
 
 class PermutationRange(Sequence):
 
-    def __init__(self, sequence):
+    def __init__(self, sequence, start=0, stop=None, step=1):
 
         self._sequence = self._validate_sequence(sequence)
 
@@ -193,7 +193,7 @@ class PermutationRange(Sequence):
             raise InfiniteSequenceError(self)
 
         sub_perms = []
-        for r in range(self._n+1):
+        for r in range(start, stop if stop else self._n+1, step):
             perm = Permutations(self._sequence, r=r)
             sub_perms.append(perm)
         self._chain = Chain(*sub_perms)
@@ -212,7 +212,7 @@ class PermutationRange(Sequence):
 
 class CombinationRange(Sequence):
 
-    def __init__(self, sequence):
+    def __init__(self, sequence, start=0, stop=None, step=1):
 
         self._sequence = self._validate_sequence(sequence)
 
@@ -222,7 +222,7 @@ class CombinationRange(Sequence):
             raise InfiniteSequenceError(self)
 
         sub_combs = []
-        for r in range(self._n+1):
+        for r in range(start, stop if stop else self._n+1, step):
             comb = Combinations(self._sequence, r=r)
             sub_combs.append(comb)
         self._chain = Chain(*sub_combs)
@@ -245,7 +245,7 @@ class Fibonacci(Sequence):
 
         self._cache = {0: 0, 1: 1, 2: 1, 3: 2, 4: 3, 5: 5,
                        6: 8, 7: 13, 8: 21, 9: 34, 10: 55}
-        self._cache_limit = None if cache is None else int(cache)
+        self._cache_limit = cache_limit
 
     def getitem(self, index):
 
